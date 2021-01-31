@@ -1,0 +1,32 @@
+version: '2.1'
+
+services:
+  database:
+    image: postgres
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=bonebox
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-q", "-d", "bones", "-h", "localhost" ]
+      timeout: 45s
+      interval: 10s
+      retries: 10
+  migrate:
+    image: migrate/migrate
+    depends_on:
+      database:
+        condition: service_healthy
+    volumes:
+      - ./migrations:/migrations
+    command: [ "-path=/migrations/", "-database", "postgres://postgres:password@database:5432/bones?sslmode=disable", "up" ]
+  test_db:
+    image: postgres
+    command: createdb -U postgres -h database campaigns_test
+    depends_on:
+      database:
+        condition: service_healthy
+    environment:
+      PGPASSWORD: password
