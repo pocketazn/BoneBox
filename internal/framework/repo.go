@@ -9,7 +9,8 @@ type BoneRepoType struct {
 }
 
 type Bone struct {
-	name string
+	Id uint64 `json:"id" db:"id"`
+	Name string `json:"name" db:"name"`
 }
 
 func NewBoneRepository() BoneRepoType {

@@ -1,8 +1,11 @@
 package controllers
 
 import (
+	"context"
 	"github.com/gorilla/mux"
 	"github.com/pocketazn/BoneBox/internal/configuration"
+	"github.com/pocketazn/BoneBox/internal/framework"
+	log "github.com/sirupsen/logrus"
 	"net/http"
 )
 
@@ -21,4 +24,11 @@ func (b * V1BoneController) RegisterRoutes(v1 *mux.Router)  {
 }
 
 func (b * V1BoneController) CreateBone(w http.ResponseWriter, r *http.Request) {
+	var ctx context.Context
+	log.Info("Validate Bone Request")
+	bone := framework.Bone{
+		Name: "a name",
+	}
+
+	respondModel(ctx, w, http.StatusCreated, &bone)
 }
