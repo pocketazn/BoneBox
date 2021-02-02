@@ -10,7 +10,7 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_DB=bonebox
     healthcheck:
-      test: [ "CMD", "pg_isready", "-q", "-d", "bones", "-h", "localhost" ]
+      test: [ "CMD", "pg_isready", "-q", "-d", "bonebox", "-h", "localhost" ]
       timeout: 45s
       interval: 10s
       retries: 10
@@ -21,10 +21,10 @@ services:
         condition: service_healthy
     volumes:
       - ./migrations:/migrations
-    command: [ "-path=/migrations/", "-database", "postgres://postgres:password@database:5432/bones?sslmode=disable", "up" ]
+    command: [ "-path=/migrations/", "-database", "postgres://postgres:password@database:5432/bonebox?sslmode=disable", "up" ]
   test_db:
     image: postgres
-    command: createdb -U postgres -h database campaigns_test
+    command: createdb -U postgres -h database bonebox_test
     depends_on:
       database:
         condition: service_healthy
