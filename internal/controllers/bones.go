@@ -10,24 +10,26 @@ import (
 )
 
 type V1BoneController struct {
-	config     *configuration.AppConfig
+	config *configuration.AppConfig
 }
 
 func NewV1BoneController(c *configuration.AppConfig) V1BoneController {
 	return V1BoneController{
-		config:     c,
+		config: c,
 	}
 }
 
-func (b * V1BoneController) RegisterRoutes(v1 *mux.Router)  {
+func (b *V1BoneController) RegisterRoutes(v1 *mux.Router) {
 	v1.Path("/bones").Name("CreateBones").Handler(http.HandlerFunc(b.CreateBone)).Methods(http.MethodPost)
 }
 
-func (b * V1BoneController) CreateBone(w http.ResponseWriter, r *http.Request) {
+func (b *V1BoneController) CreateBone(w http.ResponseWriter, r *http.Request) {
 	var ctx context.Context
 	log.Info("Validate Bone Request")
 	bone := framework.Bone{
-		Name: "a name",
+		BoneBase: framework.BoneBase{
+			Name: "a name",
+		},
 	}
 
 	respondModel(ctx, w, http.StatusCreated, &bone)

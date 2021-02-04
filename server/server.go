@@ -24,7 +24,6 @@ func (s *Server) Setup() {
 	s.srv.ReadTimeout = 15 * time.Second
 }
 
-
 func (s *Server) Run() {
 	s.srv.ListenAndServe()
 }

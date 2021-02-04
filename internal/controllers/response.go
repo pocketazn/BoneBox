@@ -12,9 +12,9 @@ import (
 )
 
 type HTTPError struct {
-	Cause      error       `json:"-"`
-	Message    string      `json:"message"`
-	StatusCode int         `json:"-"`
+	Cause      error  `json:"-"`
+	Message    string `json:"message"`
+	StatusCode int    `json:"-"`
 }
 
 type HTTPErrors struct {

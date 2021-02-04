@@ -11,10 +11,10 @@ import (
 
 type V1Router struct {
 	config   *configuration.AppConfig
-	boneRepo framework.BoneRepoType
+	boneRepo framework.BoneRepo
 }
 
-func NewV1Router(c *configuration.AppConfig, cRepo framework.BoneRepoType) V1Router {
+func NewV1Router(c *configuration.AppConfig, cRepo framework.BoneRepo) V1Router {
 	return V1Router{
 		config:   c,
 		boneRepo: cRepo,
@@ -24,14 +24,11 @@ func NewV1Router(c *configuration.AppConfig, cRepo framework.BoneRepoType) V1Rou
 //InitRoutes initialize all routes
 func (v *V1Router) Register(root *mux.Router) {
 
-
 	r := root.PathPrefix("/v1").Subrouter()
-
 
 	var bonesController controllers.V1BoneController
 
 	bonesController.RegisterRoutes(r)
-
 
 	root.PathPrefix("/docs").Handler(&docsHander{
 		root: v.config.DocsPath,
