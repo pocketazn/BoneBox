@@ -1,5 +1,10 @@
 package configuration
 
+import (
+	"encoding/json"
+	"io/ioutil"
+)
+
 const (
 	// ServiceName The name of the current service.
 	ServiceName    = "bone-box-service"
@@ -9,21 +14,21 @@ const (
 
 // CommonConfig ...
 type CommonConfig struct {
-	Host             string `config:"alias=server_host" validation:"hostname"`
-	Port             string `config:"alias=port" validation:"port"`
-	Environment      string `config:"alias=service_env"`
-	AppEnv           string `config:"alias=app_env"`
-	AppRole          string `config:"alias=app_role"`
-	AppRoleName      string `config:"alias=app_role_name"`
-	EnvironmentConst int
-	ECRegion         string
-	ECIP             string
-	ECID             string
+	Host        string `json:"server_host"`
+	Port        string `json:"port"`
+	Environment string `json:"service_env"`
+	AppEnv      string `json:"app_env"`
+	AppRole     string `json:"app_role"`
+	AppRoleName string `json:"app_role_name"`
+
+	User     string `json:"postgres_user"`
+	Password string `json:"postgres_password"`
+	DBName   string `json:"postgres_db_name"`
 }
 
 type AppConfig struct {
 	CommonConfig
-	DocsPath 	string `config:"alias=docs_path"`
+	DocsPath string `json:"docs_path"`
 }
 
 var globalConfig AppConfig
@@ -39,6 +44,11 @@ func Configure() (*AppConfig, error) {
 	}
 
 	c := AppConfig{}
+
+	file, _ := ioutil.ReadFile("boneboxConfig.json")
+
+	_ = json.Unmarshal(file, &c)
+
 	err := Load(ServiceName, &c)
 	if err != nil {
 		return nil, err

@@ -1,7 +1,10 @@
 package application
 
 import (
+	"database/sql"
+	"fmt"
 	"github.com/gorilla/mux"
+	_ "github.com/lib/pq"
 	"github.com/pocketazn/BoneBox/internal/configuration"
 	"github.com/pocketazn/BoneBox/internal/framework"
 	"github.com/pocketazn/BoneBox/internal/routers"
@@ -10,14 +13,20 @@ import (
 )
 
 type APIApplication struct {
-	config *configuration.AppConfig
-	Server *server.Server
-	Router *mux.Router
-	BoneBoxRepo framework.BoneRepoType
+	config      *configuration.AppConfig
+	Server      *server.Server
+	Router      *mux.Router
+	BoneBoxRepo framework.BoneRepo
 }
 
 func NewAPIApplication(c *configuration.AppConfig) *APIApplication {
-	bRepo := framework.NewBoneRepository()
+	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
+		c.Host, c.Port, c.User, c.Password, c.DBName)
+	db, err := sql.Open("postgres", psqlInfo)
+	if err != nil {
+		//TODO HANDLE THIS
+	}
+	bRepo := framework.NewBoneRepository(*db)
 
 	rootRouter := mux.NewRouter()
 	r := routers.NewV1Router(c, bRepo)
@@ -27,10 +36,10 @@ func NewAPIApplication(c *configuration.AppConfig) *APIApplication {
 	srv.Setup()
 
 	return &APIApplication{
-		config:       c,
-		Server: &srv,
+		config:      c,
+		Server:      &srv,
 		BoneBoxRepo: bRepo,
-		Router:       rootRouter,
+		Router:      rootRouter,
 	}
 }
 

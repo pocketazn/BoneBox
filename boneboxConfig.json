@@ -1,0 +1,12 @@
+{
+  "server_host": "localhost",
+  "port": "5432",
+  "service_env": "DEVELOPMENT",
+  "app_env": "DEVELOPMENT",
+  "app_role": "",
+  "app_role_name": "",
+  "postgres_user": "postgres",
+  "postgres_password": "password",
+  "postgres_db_name": "bonebox",
+  "docs_path": ""
+}
