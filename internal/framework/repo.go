@@ -54,17 +54,23 @@ func (r *BoneRepo) CreateBone(ctx context.Context, bone BoneBase) (Bone, error) 
 			bone.Name,
 			bone.Description,
 			bone.ExternalLabel,
-		).
+		).Suffix("RETURNING *").
 		ToSql()
 	if err != nil {
 		//TODO create custom error
 		return b, err
 	}
 
-	rows := r.db.QueryRow(query, args...)
-	if rows.Err() != nil {
-		rows.Scan(bone)
-	}
+	err = r.db.QueryRow(query, args...).
+		Scan(
+			&b.Id,
+			&b.Name,
+			&b.Description,
+			&b.ExternalLabel,
+			&b.CreatedAt,
+			&b.UpdatedAt,
+			&b.ArchivedAt,
+			)
 
-	return b, nil
+	return b, err
 }
