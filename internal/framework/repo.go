@@ -43,7 +43,7 @@ func NewBoneRepository(db sql.DB) BoneRepo {
 	}
 }
 
-func (r *BoneRepo) CreateBone(ctx context.Context, bone Bone) (Bone, error) {
+func (r *BoneRepo) CreateBone(ctx context.Context, bone BoneBase) (Bone, error) {
 	var b Bone
 
 	psql := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)

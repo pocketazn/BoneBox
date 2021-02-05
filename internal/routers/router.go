@@ -10,14 +10,14 @@ import (
 )
 
 type V1Router struct {
-	config   *configuration.AppConfig
-	boneRepo framework.BoneRepo
+	config     *configuration.AppConfig
+	dataAccess framework.DataAccessor
 }
 
-func NewV1Router(c *configuration.AppConfig, cRepo framework.BoneRepo) V1Router {
+func NewV1Router(c *configuration.AppConfig, bRepo framework.DataAccessor) V1Router {
 	return V1Router{
-		config:   c,
-		boneRepo: cRepo,
+		config:     c,
+		dataAccess: bRepo,
 	}
 }
 
@@ -27,6 +27,8 @@ func (v *V1Router) Register(root *mux.Router) {
 	r := root.PathPrefix("/v1").Subrouter()
 
 	var bonesController controllers.V1BoneController
+
+	bonesController = controllers.NewV1BoneController(v.config, v.dataAccess)
 
 	bonesController.RegisterRoutes(r)
 

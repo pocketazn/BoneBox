@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"context"
+	"encoding/json"
 	"github.com/gorilla/mux"
 	"github.com/pocketazn/BoneBox/internal/configuration"
 	"github.com/pocketazn/BoneBox/internal/framework"
@@ -11,11 +12,13 @@ import (
 
 type V1BoneController struct {
 	config *configuration.AppConfig
+	dataAccess framework.DataAccessor
 }
 
-func NewV1BoneController(c *configuration.AppConfig) V1BoneController {
+func NewV1BoneController(c *configuration.AppConfig, d framework.DataAccessor) V1BoneController {
 	return V1BoneController{
 		config: c,
+		dataAccess: d,
 	}
 }
 
@@ -25,12 +28,20 @@ func (b *V1BoneController) RegisterRoutes(v1 *mux.Router) {
 
 func (b *V1BoneController) CreateBone(w http.ResponseWriter, r *http.Request) {
 	var ctx context.Context
-	log.Info("Validate Bone Request")
-	bone := framework.Bone{
-		BoneBase: framework.BoneBase{
-			Name: "a name",
-		},
+	var bone framework.BoneBase
+
+	err := json.NewDecoder(r.Body).Decode(&bone)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
 	}
 
-	respondModel(ctx, w, http.StatusCreated, &bone)
+	log.Info("Validate Create Params")
+
+	createdBone, err := b.dataAccess.CreateBone(ctx, bone)
+	if err != nil {
+		// TODO HANDLE THIS
+	}
+
+	respondModel(ctx, w, http.StatusCreated, &createdBone)
 }

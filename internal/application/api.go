@@ -16,7 +16,7 @@ type APIApplication struct {
 	config      *configuration.AppConfig
 	Server      *server.Server
 	Router      *mux.Router
-	BoneBoxRepo framework.BoneRepo
+	BoneBoxRepo framework.DataAccessor
 }
 
 func NewAPIApplication(c *configuration.AppConfig) *APIApplication {
@@ -26,10 +26,10 @@ func NewAPIApplication(c *configuration.AppConfig) *APIApplication {
 	if err != nil {
 		//TODO HANDLE THIS
 	}
-	bRepo := framework.NewBoneRepository(*db)
+	repo := framework.NewDataAccess(*db)
 
 	rootRouter := mux.NewRouter()
-	r := routers.NewV1Router(c, bRepo)
+	r := routers.NewV1Router(c, &repo)
 	r.Register(rootRouter)
 
 	srv := server.New(rootRouter)
@@ -38,7 +38,7 @@ func NewAPIApplication(c *configuration.AppConfig) *APIApplication {
 	return &APIApplication{
 		config:      c,
 		Server:      &srv,
-		BoneBoxRepo: bRepo,
+		BoneBoxRepo: &repo,
 		Router:      rootRouter,
 	}
 }
